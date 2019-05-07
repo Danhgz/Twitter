@@ -8,32 +8,33 @@ class ListaAmigos {
    private:
       CeldaAmigo * primera;
 	  CeldaAmigo * ultima;
-	  void ordenar();
+	  //void ordenar();
 
 	  friend class Lista;
 
       class CeldaAmigo {
 	     public:
 			char * nombre;
-		    int menciones;			
+		    int menciones;
+			int diceResultado;
 			CeldaAmigo * anterior;
 			CeldaAmigo * siguiente;
 			CeldaAmigo(char*, int);
 			~CeldaAmigo();
 			ostream & imprimir( ostream &);
+			void ordenar();
 	  }; 
 
 
 	public:
 		ListaAmigos();
 		~ListaAmigos();
-		//ListaAmigos & pushFront(int);
-		//ListaAmigos & pushBack(int);
+		ListaAmigos & pushBack(char*);
 		char* getFront(); // Retorna primer elemento sin borrar
 		char* getBack();
-		int buscar(int); // Recibe elemento retorna pos, o -1 si no esta
-		ListaAmigos & insertar(char*, int); // Recibe elemento y menciones
-		int aumentarMencion(char*); //Recibe nombre y aumenta su numero de menciones devuelve menciones
+		char* buscar(char*); // Recibe elemento retorna pos, o -1 si no esta
+		ListaAmigos & insertar(char*, int, int); // Recibe elemento y menciones
+		ListaAmigos & buscarAumentar(char*); //Recibe nombre y aumenta su numero de menciones devuelve menciones
 		char* get(int); // Recibe pos y retorna elemento -1 si no esta
 		ostream & imprimir( ostream & );
 		int vacia();

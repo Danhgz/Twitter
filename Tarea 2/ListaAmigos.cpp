@@ -23,7 +23,10 @@ ostream & ListaAmigos::CeldaAmigo::imprimir( ostream & salida){
 	}
 	return salida;
 }
-		
+void ListaAmigos::CeldaAmigo::ordenar() {
+
+}
+
 ListaAmigos::ListaAmigos(){
   primera = 0;
   ultima = 0;
@@ -35,36 +38,23 @@ ListaAmigos::~ListaAmigos(){
 	}
 }
 
-//ListaAmigos & ListaAmigos::pushFront(char* usuario){
-//    CeldaAmigo * nueva = new CeldaAmigo(elemento);
-//    nueva->siguiente = primera;
-//    if(primera){ // SE VA A COLAR ANTES DEL QUE ESTA DE PRIMERO
-//		primera->anterior = nueva;
-//	}	
-//	else { // LISTA ESTA VACIA
-//		ultima = nueva;
-//	}
-//	primera = nueva;
-//	return *this;
-//}
-
-//ListaAmigos & ListaAmigos::pushBack(int elemento){
-//	CeldaAmigo * nueva = new CeldaAmigo(elemento);
-//	nueva ->anterior = ultima;
-//	if(ultima){
-//	   ultima->siguiente = nueva;	
-//	}
-//	else {
-//		primera = nueva;
-//	}
-//	ultima = nueva;
-//	return *this;
-//}
+ListaAmigos & ListaAmigos::pushBack(char* nombre){
+	CeldaAmigo * nueva = new CeldaAmigo(nombre, 0);
+	nueva ->anterior = ultima;
+	if(ultima){
+	   ultima->siguiente = nueva;	
+	}
+	else {
+		primera = nueva;
+	}
+	ultima = nueva;
+	return *this;
+}
 
 char* ListaAmigos::getFront(){
-   char* valor = "-1";
+   char* valor =0;
    if(primera){
-	  valor = primera->nombre +' '+ primera->menciones; 
+	  valor = primera->nombre +','+ primera->menciones; 
    }	
    else {
 	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 
@@ -74,7 +64,7 @@ char* ListaAmigos::getFront(){
 }
 
 char* ListaAmigos::getBack() {
-	char* valor = "-1";
+	char* valor = (char*)"-";
 	if (primera) {
 		valor = ultima->nombre + ' ' + ultima->menciones;
 	}
@@ -91,9 +81,10 @@ int ListaAmigos::vacia(){
 }
 
 char* ListaAmigos::buscar(char* nombre){
-	int pos = -1;
+	//int pos = -1;
+	char * valor = 0;
 	int encontrado = 0;
-	CeldaAmigo * actual = primera;
+	CeldaAmigo * actual= primera;
 	if(actual){
 	   int i = -1;
 	   while(!encontrado && actual){
@@ -102,19 +93,19 @@ char* ListaAmigos::buscar(char* nombre){
          actual= actual->siguiente;		 
 	   }
 	   if(encontrado){
-		  pos = i;
+		   valor = actual->nombre;
 	   }
 	}
 	else {
 	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 		
 	}
-	return pos;
+	return valor;
 }
 
-ListaAmigos &  ListaAmigos::insertar(int pos, int elemento){
+ListaAmigos &  ListaAmigos::insertar(char* nombre, int menciones, int pos){
 	if(pos >= 0){
 		if(pos==0){
-			pushFront(elemento);
+			pushBack(nombre);
 		}
 		else { // pos es > 0
 			if(!vacia()){ // tiene al menos un elemento y pos > 0
@@ -126,11 +117,11 @@ ListaAmigos &  ListaAmigos::insertar(int pos, int elemento){
 			   }
                if(!actual){
 				  if(i==pos){
-					pushBack(elemento);  
+					pushBack(nombre);  
 				  } 
 			   }
 			   else {
-				   CeldaAmigo * nueva = new CeldaAmigo(elemento);
+				   CeldaAmigo * nueva = new CeldaAmigo(nombre, menciones);
 				   nueva->siguiente = actual;
 				   nueva->anterior = actual->anterior;
 				   actual->anterior = nueva;
@@ -164,6 +155,28 @@ char*  ListaAmigos::get(int pos){
 	}
 	
 	return valor;
+}
+
+ListaAmigos & ListaAmigos::buscarAumentar(char* nombre) {
+	char * valor = 0;
+	int encontrado = 0;
+	CeldaAmigo * actual = primera;
+	if (actual) {
+		int i = -1;
+		while (!encontrado && actual) {
+			++i;
+			encontrado = (actual->nombre == nombre);
+			actual = actual->siguiente;
+		}
+		if (encontrado) {
+			valor = actual->nombre;
+			++actual->menciones;
+		}
+	}
+	else {
+		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
+	}
+	return *this;
 }
 
 ostream & ListaAmigos::imprimir( ostream & salida){

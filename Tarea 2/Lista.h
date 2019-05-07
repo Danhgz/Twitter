@@ -25,15 +25,15 @@ class Lista {
 
 	public:
 		Lista();
-		Lista(int, const int *); // Recibe un entero con la cantidad de elementos y un vector
+		Lista(int, char *); // Recibe un entero con la cantidad de elementos y un vector
 		Lista(const Lista &);
 		~Lista();
 		//Lista & pushFront(char*);
 		Lista & pushBack(char*);
-		int getFront(); // Retorna primer elemento sin borrar
-		int getBack();
-		int buscar(char*); // Recibe usuario retorna pos , o -1 si no esta
-		Lista & insertar(int, char*); // Recibe pos y usuario
+		char* getFront(); // Retorna primer elemento sin borrar
+		char* getBack();
+		char* get(int);
+		char* buscar(char*); // Recibe usuario retorna pos , o -1 si no esta
 		ostream & imprimir( ostream & );
 		int vacia();
 };
