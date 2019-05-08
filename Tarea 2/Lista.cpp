@@ -1,13 +1,15 @@
 #include "pch.h"
 #include "Lista.h"
+#include "ListaAmigos.h"
 #include<iostream>
 using namespace std;
 
 
-Lista::Celda::Celda( char *usuario, ListaAmigos lista){
+Lista::Celda::Celda( char *usuario, ListaAmigos *lista){
 	anterior = 0;
 	siguiente = 0;
-	this->usuario = usuario;	
+	this->usuario = usuario;
+	this->amigos = lista;
 }
 
 Lista::Celda::~Celda(){
@@ -17,7 +19,7 @@ Lista::Celda::~Celda(){
 }
 
 ostream & Lista::Celda::imprimir( ostream & salida){
-	salida << *usuario << " ";
+	salida << usuario << endl;
 	if(siguiente){
 		siguiente->imprimir(salida);
 	}
@@ -28,30 +30,6 @@ Lista::Lista(){
   primera = 0;
   ultima = 0;
 }
-/**
-Descripcion: Construye una lista a partir de un vector con n elementos
-Requiere: Que exista el metodo pushBack
-@param n Cantidad de elementos
-@param elementos Puntero al inicio del vector con los n elementos
-**/
-Lista::Lista(int n, char * elementos){
-   primera=0;
-   ultima=0;
-   for(int i=0; i< n; ++i){
-	   elementos = new char[i];
-	  this->pushBack( elementos );  	
-   }	
-} 
-
-Lista::Lista(const Lista & otra){
-   primera=0;
-   ultima=0;	
-   Celda * actual = otra.primera;
-   while(actual){
-      this->pushBack( actual->usuario);	
-	   actual = actual->siguiente;
-   }
-}
 		
 Lista::~Lista(){
 	if(primera){
@@ -59,9 +37,8 @@ Lista::~Lista(){
 	}
 }
 
-
 Lista & Lista::pushBack(char * usuario){
-	Celda * nueva = new Celda(usuario, ListaAmigos());
+	Celda * nueva = new Celda(usuario, 0);
 	nueva ->anterior = ultima;
 	if(ultima){
 	   ultima->siguiente = nueva;	
@@ -73,78 +50,39 @@ Lista & Lista::pushBack(char * usuario){
 	return *this;
 }
 
-char* Lista::getFront(){
-   char * valor = 0;
-   if(primera){
-	  valor = primera->usuario; 
-   }	
-   else {
-	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 
-   }
-	
-   return valor;
-}
-
-char * Lista::getBack(){
-   char* valor = 0;
-   if(ultima){
-	  valor = ultima->usuario; 
-   }	
-   else {
-	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 
-   }	
-   return valor;	
-}
-
-
 int Lista::vacia(){
 	return !primera;
 }
 
-
-
-char * Lista::buscar(char* usuario){
-	char * valor = 0;
+Lista::Celda & Lista::buscar(char* usuario) {
 	int encontrado = 0;
 	Celda * actual = primera;
-	if(actual){
-	   int i = -1;
-	   while(!encontrado && actual){
-         ++i;		
-		 encontrado = (actual->usuario == usuario);
-         actual= actual->siguiente;		 
-	   }
-	   if(encontrado){
-		   valor = actual->usuario;
-	   }
+	if (actual) {
+		while (!encontrado && actual) {
+			encontrado = (actual->usuario == usuario);
+			actual = actual->siguiente;
+		}
+		actual = actual->anterior;
 	}
 	else {
-	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 		
+		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
 	}
-	return valor;
+	return *actual;
 }
 
-char*  Lista::get(int pos){
-	char* valor = 0;
-	if(pos >=0){
-       Celda * actual = primera;
-       int i = 0;
-       while(actual && i<pos){
-		   ++i;
-		   actual = actual->siguiente;
-	   }	   
-	   if(!actual){
-		  cerr << "Advertencia: Se retorna un 0 por omisión posición invalida"<<endl; 				 
-	   }
-	   else {
-		  valor = actual->usuario; 
-	   }
+int Lista::existe(char* usuario) {
+	int encontrado = 0;
+	Celda * actual = primera;
+	if (actual) {
+		while (!encontrado && actual) {
+			encontrado = (actual->usuario == usuario);
+			actual = actual->siguiente;
+		}
 	}
 	else {
-	  cerr << "Advertencia: Se retorna un 0 por omisión posición invalida"<<endl; 				
+		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
 	}
-	
-	return valor;
+	return encontrado;
 }
 
 ostream & Lista::imprimir( ostream & salida){
@@ -155,3 +93,71 @@ ostream & Lista::imprimir( ostream & salida){
 	salida << " }";
 	return salida;
 }
+
+int Lista::getMencionesUsuario(char* usuario) {
+	float valor = 0.00;
+	if (existe(usuario)) {
+		valor = buscar(usuario).amigos->primera->menciones;
+	}
+	else {
+		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
+	}
+	return valor;
+}
+
+void Lista::calcularDice() {
+	if (primera){
+		Celda * actual = primera;
+		ListaAmigos::CeldaAmigo * actualAmigo;
+		while (actual){
+			actualAmigo = actual->amigos->primera;
+			while (actualAmigo) {
+				actualAmigo->diceResultado = (2 * actualAmigo->menciones) / (getMencionesUsuario(actual->usuario) + getMencionesUsuario(actualAmigo->nombre));
+				actualAmigo = actualAmigo->siguiente;
+			}
+			actual = actual->siguiente;
+		}
+	}
+}
+
+void Lista::ordenar() {
+	if (primera) {
+		Celda * actual = primera;
+		while (actual) {
+			burbuja(*actual->amigos);
+			actual = actual->siguiente;
+		}
+	}
+}
+
+void Lista::burbuja(ListaAmigos &lista) {
+	ListaAmigos::CeldaAmigo *marcador;
+	ListaAmigos::CeldaAmigo *comparador;
+	marcador = lista.primera;
+	comparador = marcador;
+	while (marcador->siguiente != 0) {
+		while (comparador->siguiente!= 0) {
+			if (comparador->diceResultado < comparador->siguiente->diceResultado) {
+				swap(comparador, comparador->siguiente);
+			}
+			comparador = comparador->siguiente;
+		}
+		comparador = lista.primera;
+		marcador = marcador->siguiente;
+	}
+}
+
+void Lista::swap(ListaAmigos::CeldaAmigo * amigo1, ListaAmigos::CeldaAmigo * amigo2) {
+	ListaAmigos::CeldaAmigo aux;
+	aux.nombre = amigo1->nombre;
+	aux.menciones = amigo1->menciones;
+	aux.diceResultado = amigo1->diceResultado;
+	amigo1->nombre = amigo2->nombre;
+	amigo1->menciones = amigo2->menciones;
+	amigo1->diceResultado = amigo2->diceResultado;
+	amigo2->nombre = aux.nombre;
+	amigo2->menciones = aux.menciones;
+	amigo2->diceResultado = aux.diceResultado;
+}
+
+
