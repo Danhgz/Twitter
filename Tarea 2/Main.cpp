@@ -3,11 +3,20 @@
 
 #include "pch.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 int main()
 {
-    cout << "Hello World!\n"; 
+	ifstream archivo;
+	archivo.open("tuitsTareaCI0113.txt");
+	if (!archivo) {
+		cerr << "No se puede abrir el archivo";
+		exit(1);   // call system to stop
+	}
+	else {
+		cout << "Hello World!\n";
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
