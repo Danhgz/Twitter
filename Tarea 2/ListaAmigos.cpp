@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ListaAmigos.h"
 #include<iostream>
 using namespace std;
@@ -6,17 +5,17 @@ using namespace std;
 ListaAmigos::CeldaAmigo::CeldaAmigo() {
 	anterior = 0;
 	siguiente = 0;
-	this->nombre = 0;
+	this->nombre = "";
 	this->menciones = 0;
 	this->diceResultado = 0;
 }
 
-ListaAmigos::CeldaAmigo::CeldaAmigo( char *nombre, float menciones){
+ListaAmigos::CeldaAmigo::CeldaAmigo( string nombre){
 	anterior = 0;
 	siguiente = 0;
 	this->nombre = nombre;	
-	this->menciones = menciones;
-	this->diceResultado = 0;
+	this->menciones = 0.0;
+	this->diceResultado = 0.0;
 }
 
 ListaAmigos::CeldaAmigo::~CeldaAmigo(){
@@ -25,12 +24,8 @@ ListaAmigos::CeldaAmigo::~CeldaAmigo(){
 	}
 }
 
-ostream & ListaAmigos::CeldaAmigo::imprimir( ostream & salida){
-	salida << nombre << ": " << menciones << endl;
-	if(siguiente){
-		siguiente->imprimir(salida);
-	}
-	return salida;
+void ListaAmigos::CeldaAmigo::imprimir() {
+	cout << "Amigo: "<<'\t'<< nombre.c_str() << endl <<" Dice: " << '\t' <<diceResultado<<endl << endl;
 }
 
 ListaAmigos::ListaAmigos(){
@@ -44,8 +39,8 @@ ListaAmigos::~ListaAmigos(){
 	}
 }
 
-ListaAmigos & ListaAmigos::pushBack(char* nombre){
-	CeldaAmigo * nueva = new CeldaAmigo(nombre, 1);
+ListaAmigos & ListaAmigos::pushBack(string nombre){
+	CeldaAmigo * nueva= new CeldaAmigo(nombre);
 	nueva ->anterior = ultima;
 	if(ultima){
 	   ultima->siguiente = nueva;	
@@ -57,39 +52,34 @@ ListaAmigos & ListaAmigos::pushBack(char* nombre){
 	return *this;
 }
 
-
-
 int ListaAmigos::vacia(){
 	return !primera;
 }
 
-int ListaAmigos::existe(char* nombre) {
+int ListaAmigos::existe(string nombre) {
 	int encontrado = 0;
-	CeldaAmigo * actual = primera;
-	if (actual) {
-		while (!encontrado && actual) {
-			encontrado = (actual->nombre == nombre);
-			actual = actual->siguiente;
+	if (primera) {
+		CeldaAmigo * actual = primera;
+		if (actual) {
+			while (!encontrado && actual) {
+				encontrado = (actual->nombre == nombre);
+				actual = actual->siguiente;
+			}
 		}
-	}
-	else {
-		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
 	}
 	return encontrado;
 }
 
-ListaAmigos::CeldaAmigo & ListaAmigos::buscar(char* nombre){ 
+ListaAmigos::CeldaAmigo & ListaAmigos::buscar(string nombre){ 
 	int encontrado = 0;
 	CeldaAmigo * actual= primera;
 	if(actual){
 	   while(!encontrado && actual){	
 		 encontrado = (actual->nombre == nombre);
-         actual= actual->siguiente;		 
+		 if (!encontrado) {
+			 actual = actual->siguiente;
+		 }
 	   }
-		actual = actual->anterior;
-	}
-	else {
-	  cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión"<<endl; 		
 	}
 	return *actual;
 }
@@ -98,15 +88,19 @@ ListaAmigos & ListaAmigos::getListaAmigos(){
 	return *this;
 }
 
-void ListaAmigos::aumentarMenciones(char* nombre) {
-	this->buscar(nombre).menciones++ ;
+void ListaAmigos::aumentarMenciones(string nombre) {	
+	buscar(nombre).menciones++ ;
 }
 
-ostream & ListaAmigos::imprimir( ostream & salida){
-	salida << "{ ";
-	if(primera){
-	   primera->imprimir(salida);
+ void ListaAmigos::imprimir( int cantidad) {
+	 CeldaAmigo* amigo = primera;
+	 for (int i = 0; i < cantidad; i++) {
+		 if (amigo != 0) {
+			 amigo->imprimir();
+		 }
+		 if (!amigo->siguiente) {
+			 i = cantidad;
+		 }
+		 amigo = amigo->siguiente;	 
 	}
-	salida << " }";
-	return salida;
 }

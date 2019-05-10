@@ -1,7 +1,4 @@
-// Tarea 2.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include "pch.h"
+#include "lista.h"
 #include <iostream>
 #include <fstream>
 #include <ctype.h>
@@ -11,23 +8,23 @@ using namespace std;
 
 int main()
 {
+	Lista lista;
 	ifstream archivo;
 	string a = "";
 	int termino = 0;
-	long contador = 0;
 	string usuarios[100];
 	for (int i = 0; i < 100; i++) {
 		usuarios[i] = "";
 	}
-	string usuario;//[100];
+	string usuario;
 	int contadorPalabras = 0;
 	int inicio = 0;
-	int final = 0;
 	int comas = 0;
 	int texto = 0;
+	string user = "";
+	int consultas=0;
 	ofstream file;
-	file.open("archivo.txt");
-	archivo.open("a.txt");
+	archivo.open("tuitsTareaCI0113.txt");
 	if (!archivo) {
 		cerr << "No se puede abrir el archivo\n";
 		exit(1);   
@@ -67,28 +64,31 @@ int main()
 						contadorPalabras++;
 					}
 					if (inicio != -1) {
-						usuario += a.at(i);
-					}
+							usuario += a.at(i);
+							}
 				}
 				if (comas == 0) {
 					termino = 1;
 				}
 			}
-			if (usuarios[0] != "") {
-				contador++;		//cout << comas <<endl;		
-				cout << "Tweet#: " << contador << " ";
-
-				for (int i = 0; i < 100 && usuarios[i] != ""; i++)
+			
+			for (int i = 0; usuarios[i]!= ""; i++)
+			{
+				for (int j = 0; usuarios[j]!= ""; j++)
 				{
-					file << usuarios[i];
-					file << "\n";
-					cout << usuarios[i] << " ";
+					lista.agregar(usuarios[i], usuarios[j]);
 				}
-				cout << endl;
 			}
-
 		}
+		lista.calcularDice();
+		lista.ordenar();
+		cout << "Digite el usuario a consultar:"<<endl;
+		cin >> user;
+		cout << "Cuantos mejores amigos desea ver?" << endl;
+		cin >> consultas;
+		lista.imprimir(user, consultas);
 	}
-	//system("pause");
+
+	system("pause");
 
 }

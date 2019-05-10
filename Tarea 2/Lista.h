@@ -10,30 +10,32 @@ class Lista {
    private:
       Celda * primera;
 	  Celda * ultima;
+
+	  void burbuja(ListaAmigos&);
+	  void swap(ListaAmigos::CeldaAmigo*, ListaAmigos::CeldaAmigo*);
 	  class Celda {
 
 	  public:
 		  Celda * anterior;
 		  Celda * siguiente;
-		  char * usuario;
+		  string  usuario;
 		  ListaAmigos * amigos;
-		  Celda(char*, ListaAmigos*);
+		  Celda(string);
 		  ~Celda();
-		  ostream & imprimir(ostream &);
+		  void imprimir(string, int);
 	  };
 
 	public:
 		Lista();
 		~Lista();
-		Lista & pushBack(char*);
-		int getMencionesUsuario(char*); // Retorna primer elemento sin borrar
-		Celda & buscar(char*); // Recibe usuario retorna Celda de dado usuario
-		int existe(char*); 
-		ostream & imprimir( ostream & );
+		Lista & pushBack(string);
+		float getMencionesUsuario(string); // Retorna primer elemento sin borrar
+		Celda & buscar(string); // Recibe usuario retorna Celda de dado usuario
+		int existe(string); 
 		void ordenar();
-		void burbuja(ListaAmigos&);
-		void swap(ListaAmigos::CeldaAmigo*, ListaAmigos::CeldaAmigo*);
+		void imprimir( string ,int );
 		void calcularDice();
+		void agregar(string,string );
 		int vacia();
 };
 #endif
