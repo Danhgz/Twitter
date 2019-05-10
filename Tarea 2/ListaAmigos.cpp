@@ -24,7 +24,11 @@ ListaAmigos::CeldaAmigo::~CeldaAmigo(){
 	   delete siguiente;	
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ostream & ListaAmigos::CeldaAmigo::imprimir( ostream & salida){
 	salida << nombre << ": " << menciones << endl;
 	if(siguiente){
@@ -43,7 +47,11 @@ ListaAmigos::~ListaAmigos(){
 		delete primera;
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ListaAmigos & ListaAmigos::pushBack(char* nombre){
 	CeldaAmigo * nueva = new CeldaAmigo(nombre, 1);
 	nueva ->anterior = ultima;
@@ -58,11 +66,19 @@ ListaAmigos & ListaAmigos::pushBack(char* nombre){
 }
 
 
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 int ListaAmigos::vacia(){
 	return !primera;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 int ListaAmigos::existe(char* nombre) {
 	int encontrado = 0;
 	CeldaAmigo * actual = primera;
@@ -77,7 +93,11 @@ int ListaAmigos::existe(char* nombre) {
 	}
 	return encontrado;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ListaAmigos::CeldaAmigo & ListaAmigos::buscar(char* nombre){ 
 	int encontrado = 0;
 	CeldaAmigo * actual= primera;
@@ -93,15 +113,27 @@ ListaAmigos::CeldaAmigo & ListaAmigos::buscar(char* nombre){
 	}
 	return *actual;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ListaAmigos & ListaAmigos::getListaAmigos(){
 	return *this;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 void ListaAmigos::aumentarMenciones(char* nombre) {
 	this->buscar(nombre).menciones++ ;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ostream & ListaAmigos::imprimir( ostream & salida){
 	salida << "{ ";
 	if(primera){

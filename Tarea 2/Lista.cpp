@@ -17,7 +17,11 @@ Lista::Celda::~Celda(){
 	   delete siguiente;	
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ostream & Lista::Celda::imprimir( ostream & salida){
 	salida << usuario << endl;
 	if(siguiente){
@@ -36,7 +40,11 @@ Lista::~Lista(){
 		delete primera;
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 Lista & Lista::pushBack(char * usuario){
 	Celda * nueva = new Celda(usuario, 0);
 	nueva ->anterior = ultima;
@@ -49,11 +57,19 @@ Lista & Lista::pushBack(char * usuario){
 	ultima = nueva;
 	return *this;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 int Lista::vacia(){
 	return !primera;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 Lista::Celda & Lista::buscar(char* usuario) {
 	int encontrado = 0;
 	Celda * actual = primera;
@@ -69,7 +85,11 @@ Lista::Celda & Lista::buscar(char* usuario) {
 	}
 	return *actual;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 int Lista::existe(char* usuario) {
 	int encontrado = 0;
 	Celda * actual = primera;
@@ -84,7 +104,11 @@ int Lista::existe(char* usuario) {
 	}
 	return encontrado;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 ostream & Lista::imprimir( ostream & salida){
 	salida << "{ ";
 	if(primera){
@@ -93,7 +117,11 @@ ostream & Lista::imprimir( ostream & salida){
 	salida << " }";
 	return salida;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 int Lista::getMencionesUsuario(char* usuario) {
 	float valor = 0.00;
 	if (existe(usuario)) {
@@ -104,7 +132,11 @@ int Lista::getMencionesUsuario(char* usuario) {
 	}
 	return valor;
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 void Lista::calcularDice() {
 	if (primera){
 		Celda * actual = primera;
@@ -119,7 +151,11 @@ void Lista::calcularDice() {
 		}
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 void Lista::ordenar() {
 	if (primera) {
 		Celda * actual = primera;
@@ -129,7 +165,11 @@ void Lista::ordenar() {
 		}
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 void Lista::burbuja(ListaAmigos &lista) {
 	ListaAmigos::CeldaAmigo *marcador;
 	ListaAmigos::CeldaAmigo *comparador;
@@ -146,7 +186,11 @@ void Lista::burbuja(ListaAmigos &lista) {
 		marcador = marcador->siguiente;
 	}
 }
-
+/*
+*@Descripcion:
+*@Param salida:
+*@Return:
+*/
 void Lista::swap(ListaAmigos::CeldaAmigo * amigo1, ListaAmigos::CeldaAmigo * amigo2) {
 	ListaAmigos::CeldaAmigo aux;
 	aux.nombre = amigo1->nombre;
