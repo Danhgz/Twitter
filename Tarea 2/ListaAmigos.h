@@ -13,27 +13,26 @@ class ListaAmigos {
 	  
     class CeldaAmigo {
 		public:
-			char * nombre;
+			string nombre;
 		    float menciones;
 			float diceResultado;
 			CeldaAmigo * anterior;
 			CeldaAmigo * siguiente;
 			CeldaAmigo();
-			CeldaAmigo(char*, float);
+			CeldaAmigo(string);
 			~CeldaAmigo();
-			ostream & imprimir( ostream &);
+			void imprimir();
 	}; 
-
 
 	public:
 		ListaAmigos();
 		~ListaAmigos();
-		ListaAmigos & pushBack(char*);
-		ListaAmigos::CeldaAmigo & buscar(char*); // Recibe elemento retorna pos, o -1 si no esta
-		int existe(char*); 
+		ListaAmigos & pushBack(string);
+		ListaAmigos::CeldaAmigo & buscar(string); // Recibe elemento retorna pos, o -1 si no esta
+		int existe(string); 
 		ListaAmigos & getListaAmigos();
-		void aumentarMenciones(char*); //Recibe nombre y aumenta su numero de menciones devuelve menciones
-		ostream & imprimir( ostream & );
+		void aumentarMenciones(string); //Recibe nombre y aumenta su numero de menciones devuelve menciones
+		void imprimir( int);
 		int vacia();
 };
 #endif

@@ -1,33 +1,28 @@
-#include "pch.h"
 #include "Lista.h"
 #include "ListaAmigos.h"
 #include<iostream>
 using namespace std;
 
-
-Lista::Celda::Celda( char *usuario, ListaAmigos *lista){
+Lista::Celda::Celda( string usuario){
 	anterior = 0;
 	siguiente = 0;
 	this->usuario = usuario;
-	this->amigos = lista;
+	this->amigos = new ListaAmigos();
 }
 
 Lista::Celda::~Celda(){
+	this;
 	if(siguiente){
-	   delete siguiente;	
+	   delete siguiente;
 	}
+	delete amigos;
+
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-ostream & Lista::Celda::imprimir( ostream & salida){
-	salida << usuario << endl;
-	if(siguiente){
-		siguiente->imprimir(salida);
-	}
-	return salida;
+
+ void Lista::Celda::imprimir( string otro ,int cantidad){
+	 cout << "Usuario: " << usuario.c_str() << endl<< endl;
+		amigos->imprimir(cantidad) ;
+
 }
 		
 Lista::Lista(){
@@ -39,14 +34,21 @@ Lista::~Lista(){
 	if(primera){
 		delete primera;
 	}
+
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-Lista & Lista::pushBack(char * usuario){
-	Celda * nueva = new Celda(usuario, 0);
+void Lista::agregar(string otro, string amigo) {
+	if (!existe(otro)) {
+		pushBack(otro);	
+    }
+	
+	if (!buscar(otro).amigos->existe(amigo)) {
+		buscar(otro).amigos->pushBack(amigo);
+	}
+	buscar(otro).amigos->aumentarMenciones(amigo);
+}
+
+Lista & Lista::pushBack(string usuario){
+	Celda * nueva =new Celda(usuario);
 	nueva ->anterior = ultima;
 	if(ultima){
 	   ultima->siguiente = nueva;	
@@ -57,40 +59,26 @@ Lista & Lista::pushBack(char * usuario){
 	ultima = nueva;
 	return *this;
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
+
 int Lista::vacia(){
 	return !primera;
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-Lista::Celda & Lista::buscar(char* usuario) {
+
+Lista::Celda & Lista::buscar(string usuario) {
 	int encontrado = 0;
 	Celda * actual = primera;
 	if (actual) {
 		while (!encontrado && actual) {
 			encontrado = (actual->usuario == usuario);
-			actual = actual->siguiente;
+			if (!encontrado) {
+				actual = actual->siguiente;
+			}
 		}
-		actual = actual->anterior;
-	}
-	else {
-		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
 	}
 	return *actual;
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-int Lista::existe(char* usuario) {
+
+int Lista::existe(string usuario) {
 	int encontrado = 0;
 	Celda * actual = primera;
 	if (actual) {
@@ -99,63 +87,47 @@ int Lista::existe(char* usuario) {
 			actual = actual->siguiente;
 		}
 	}
-	else {
-		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
-	}
 	return encontrado;
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-ostream & Lista::imprimir( ostream & salida){
-	salida << "{ ";
-	if(primera){
-	   primera->imprimir(salida);
-	}
-	salida << " }";
-	return salida;
-}
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
-int Lista::getMencionesUsuario(char* usuario) {
-	float valor = 0.00;
-	if (existe(usuario)) {
-		valor = buscar(usuario).amigos->primera->menciones;
+
+void Lista::imprimir( string otro, int cantidad){
+	if (existe(otro)) {
+		buscar(otro).imprimir(otro, cantidad);
 	}
 	else {
-		cerr << "Advertencia: <<Lista vacía>> Se retorna un valor de -1 por omisión" << endl;
+		cout << "No existe el usuario buscado.";
+	}
+}
+
+float Lista::getMencionesUsuario(string usuario) {
+	float valor = 0.00;
+	Celda *user=0;
+	if (existe(usuario)) {
+		user = &buscar(usuario);
+		valor=user->amigos->buscar(usuario).menciones;
 	}
 	return valor;
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
+
 void Lista::calcularDice() {
+	float x = 0;
+	float y = 0;
 	if (primera){
 		Celda * actual = primera;
 		ListaAmigos::CeldaAmigo * actualAmigo;
 		while (actual){
 			actualAmigo = actual->amigos->primera;
 			while (actualAmigo) {
-				actualAmigo->diceResultado = (2 * actualAmigo->menciones) / (getMencionesUsuario(actual->usuario) + getMencionesUsuario(actualAmigo->nombre));
+				x = getMencionesUsuario(actual->usuario);
+				y = getMencionesUsuario(actualAmigo->nombre);
+				actualAmigo->diceResultado = (2 * actualAmigo->menciones) /( (x + y));
 				actualAmigo = actualAmigo->siguiente;
 			}
 			actual = actual->siguiente;
 		}
 	}
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
+
 void Lista::ordenar() {
 	if (primera) {
 		Celda * actual = primera;
@@ -165,11 +137,7 @@ void Lista::ordenar() {
 		}
 	}
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
+
 void Lista::burbuja(ListaAmigos &lista) {
 	ListaAmigos::CeldaAmigo *marcador;
 	ListaAmigos::CeldaAmigo *comparador;
@@ -186,11 +154,7 @@ void Lista::burbuja(ListaAmigos &lista) {
 		marcador = marcador->siguiente;
 	}
 }
-/*
-*@Descripcion:
-*@Param salida:
-*@Return:
-*/
+
 void Lista::swap(ListaAmigos::CeldaAmigo * amigo1, ListaAmigos::CeldaAmigo * amigo2) {
 	ListaAmigos::CeldaAmigo aux;
 	aux.nombre = amigo1->nombre;

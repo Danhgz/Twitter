@@ -1,31 +1,94 @@
-// Tarea 2.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include "pch.h"
+#include "lista.h"
 #include <iostream>
 #include <fstream>
+#include <ctype.h>
+#include <stdlib.h>
+#include <locale>
 using namespace std;
 
 int main()
 {
+	Lista lista;
 	ifstream archivo;
+	string a = "";
+	int termino = 0;
+	string usuarios[100];
+	for (int i = 0; i < 100; i++) {
+		usuarios[i] = "";
+	}
+	string usuario;
+	int contadorPalabras = 0;
+	int inicio = 0;
+	int comas = 0;
+	int texto = 0;
+	string user = "";
+	int consultas=0;
+	ofstream file;
 	archivo.open("tuitsTareaCI0113.txt");
 	if (!archivo) {
-		cerr << "No se puede abrir el archivo";
-		exit(1);   // call system to stop
+		cerr << "No se puede abrir el archivo\n";
+		exit(1);   
 	}
 	else {
-		cout << "Hello World!\n";
+		getline(archivo, a);
+		while (!archivo.eof()) {
+			usuario = "";
+			comas = 0;
+			contadorPalabras = 0;
+			for (int i = 0; i < 100; i++) {
+				usuarios[i] = "";
+			}
+			while (comas < 13 && termino == 0) {
+				getline(archivo, a);
+
+
+				inicio = -1;
+				for (int i = 0; i < a.length(); i++) {
+					if (a.substr(i, 1) == "\"" && texto == 0) {
+						texto = 1;
+					}
+					else if (a.substr(i, 1) == "\"" && texto == 1) {
+						texto = 0;
+					}
+					if (a.substr(i, 1) == "," && texto == 0) {
+						comas++;
+					}
+					if (a.substr(i, 2) == " @" && inicio == -1) {
+						inicio = i;
+						i++;
+					}
+					else if (!(isalnum(a[i]) || a[i] == '_') && inicio != -1) {
+						usuarios[contadorPalabras] = usuario;
+						inicio = -1;
+						usuario = "";
+						contadorPalabras++;
+					}
+					if (inicio != -1) {
+							usuario += a.at(i);
+							}
+				}
+				if (comas == 0) {
+					termino = 1;
+				}
+			}
+			
+			for (int i = 0; usuarios[i]!= ""; i++)
+			{
+				for (int j = 0; usuarios[j]!= ""; j++)
+				{
+					lista.agregar(usuarios[i], usuarios[j]);
+				}
+			}
+		}
+		lista.calcularDice();
+		lista.ordenar();
+		cout << "Digite el usuario a consultar:"<<endl;
+		cin >> user;
+		cout << "Cuantos mejores amigos desea ver?" << endl;
+		cin >> consultas;
+		lista.imprimir(user, consultas);
 	}
+
+	system("pause");
+
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
